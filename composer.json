@@ -1,0 +1,22 @@
+{
+	"name": "jeffpacks/semver",
+	"description": "A simple implementation of a SemVer 2.0.0 compliant version number",
+	"type": "library",
+	"homepage": "https://github.com/jeffpacks/semver",
+	"license": "MIT",
+	"authors": [{
+		"name": "Johan Fredrik Varen",
+		"email": "jeffpacks@varen.no",
+		"homepage": "https://github.com/jeffpacks"
+	}],
+	"require": {
+		"php": "^7.4",
+		"jeffpacks/substractor": "1.0.0-alpha1"
+	},
+	"minimum-stability": "alpha",
+	"autoload": {
+		"psr-4": {
+			"jeffpacks\\semver\\": "src"
+		}
+	}
+}

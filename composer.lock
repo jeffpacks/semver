@@ -1,0 +1,61 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "eb6f4d09f2232c3b5a4581388636343b",
+    "packages": [
+        {
+            "name": "jeffpacks/substractor",
+            "version": "1.0.0-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeffpacks/substractor.git",
+                "reference": "29472de88f647eae5f95df61b6d13fa1a400ee18"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jeffpacks/substractor/zipball/29472de88f647eae5f95df61b6d13fa1a400ee18",
+                "reference": "29472de88f647eae5f95df61b6d13fa1a400ee18",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "jeffpacks\\substractor\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Johan Fredrik Varen",
+                    "email": "jeffpacks@varen.no",
+                    "homepage": "https://github.com/jeffpacks"
+                }
+            ],
+            "description": "A sub-string extractor for the regex ignorant",
+            "homepage": "https://github.com/jeffpacks/substractor",
+            "time": "2021-03-12T18:27:52+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "alpha",
+    "stability-flags": {
+        "jeffpacks/substractor": 15
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^7.4"
+    },
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
+}
