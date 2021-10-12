@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2021-10-12
 
+### Changes
+- Upgraded to jeffpacks/substractor 1.0
+
 ## [1.0.0-alpha.1] - 2020-03-12
 
 ### Added
