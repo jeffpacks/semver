@@ -11,9 +11,9 @@
 	}],
 	"require": {
 		"php": "^7.4",
-		"jeffpacks/substractor": "1.0.0-alpha1"
+		"jeffpacks/substractor": "^1.0"
 	},
-	"minimum-stability": "alpha",
+	"minimum-stability": "stable",
 	"autoload": {
 		"psr-4": {
 			"jeffpacks\\semver\\": "src"
