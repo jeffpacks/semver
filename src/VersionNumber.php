@@ -869,8 +869,11 @@ class VersionNumber {
 			$string .= ".{$this->getAux()}";
 		}
 
-		if (!$this->isStable()) {
-			$string .= "-{$this->getPreReleaseType()}.{$this->getPreReleaseNumber()}";
+		if ($this->getPreReleaseType()) {
+			$string .= "-{$this->getPreReleaseType()}";
+			if ($this->getPreReleaseNumber()) {
+				$string .= "-{$this->getPreReleaseType()}";
+			}
 		}
 
 		return $string;
