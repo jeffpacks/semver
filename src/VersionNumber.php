@@ -711,6 +711,14 @@ class VersionNumber {
 		$supportedFormats = array(
 			'{major}.{minor}.{patch}.{aux}-{preType}.{preNumber}',
 			'{major}.{minor}.{patch}-{preType}.{preNumber}',
+			'{major}.{minor}-{preType}.{preNumber}',
+			'{major}-{preType}.{preNumber}',
+
+			'{major}.{minor}.{patch}.{aux}-{preType}',
+			'{major}.{minor}.{patch}-{preType}',
+			'{major}.{minor}-{preType}',
+			'{major}-{preType}',
+
 			'{major}.{minor}.{patch}.{aux}',
 			'{major}.{minor}.{patch}',
 			'{major}.{minor}',
