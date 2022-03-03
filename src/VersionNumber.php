@@ -167,7 +167,7 @@ class VersionNumber {
 	 */
 	public function getLeastSignificantIdentifier(): ?int {
 
-		if (!$this->isStable()) {
+		if ($this->hasPre()) {
 			return self::PRE;
 		}
 
