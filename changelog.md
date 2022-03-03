@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - VersionNumber::STANDARD_SEMVER_2_0_0
 - VersionNumber::isValid()
+- examples/ directory
 
 ### Fixed
 - VersionNumber::__toString() repeats pre-release type identifier (alpha/beta) instead of appending pre-release number
