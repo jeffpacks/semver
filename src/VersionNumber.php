@@ -794,15 +794,19 @@ class VersionNumber {
 	}
 
 	/**
-	 * Sets the number of the patch element.
+	 * Sets the value of the patch segment.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setPatch($number): VersionNumber {
+	public function setPatch($value): VersionNumber {
 
-		$this->patch = $this->parseNumber($number);
+		if (!$this->hasMinor()) {
+			$this->setMinor(0);
+		}
+
+		$this->patch = $this->parseNumber($value);
 
 		return $this;
 
