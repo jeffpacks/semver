@@ -21,11 +21,11 @@ class VersionNumber {
 	# Version standards
 	const STANDARD_SEMVER_2_0_0 = 1;
 
-	# Pre-release element types
+	# Pre-release segment types
 	const ALPHA = 'alpha';
 	const BETA = 'beta';
 
-	# Element identifiers
+	# Segment identifiers
 	const MAJOR = 1;
 	const MINOR = 2;
 	const PATCH = 4;
@@ -89,17 +89,17 @@ class VersionNumber {
 	 * Compares this version number with another version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this version number against.
-	 * @param int|null $element Which element(s) to compare, null for all.
+	 * @param int|null $segment Which segment(s) to compare, null for all.
 	 * @return int 1 if this version is higher, -1 if this version is lower, 0 if they're equal
 	 * @throws Exception
 	 */
-	public function compare($version, ?int $element = null): int {
+	public function compare($version, ?int $segment = null): int {
 
-		if ($this->isEqualTo($version, $element)) {
+		if ($this->isEqualTo($version, $segment)) {
 			return 0;
 		}
 
-		return $this->isHigherThan($version, $element) ? 1 : -1;
+		return $this->isHigherThan($version, $segment) ? 1 : -1;
 
 	}
 
@@ -141,7 +141,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the auxiliary element, if any.
+	 * Provides the auxiliary segment, if any.
 	 *
 	 * @return int|null
 	 */
@@ -150,7 +150,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides a combination of all the currently active element identifiers of this version number.
+	 * Provides a combination of all the currently active segment identifiers of this version number.
 	 *
 	 * @return int
 	 */
@@ -215,7 +215,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the major element of the current version number.
+	 * Provides the major segment of the current version number.
 	 *
 	 * @return int
 	 */
@@ -224,7 +224,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the minor element of the current version number.
+	 * Provides the minor segment of the current version number.
 	 *
 	 * @return int|null
 	 */
@@ -233,7 +233,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the patch element of the current version number.
+	 * Provides the patch segment of the current version number.
 	 *
 	 * @return int|null
 	 */
@@ -242,7 +242,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the major element of the current version number.
+	 * Provides the major segment of the current version number.
 	 *
 	 * @return int|null
 	 */
@@ -260,7 +260,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not the current version number has a aux segment.
+	 * Indicates whether the current version number has a aux segment.
 	 *
 	 * @return boolean
 	 */
@@ -269,7 +269,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not the current version number has a major segment.
+	 * Indicates whether the current version number has a major segment.
 	 *
 	 * @return boolean
 	 */
@@ -278,7 +278,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not the current version number has a minor segment.
+	 * Indicates whether the current version number has a minor segment.
 	 *
 	 * @return boolean
 	 */
@@ -287,7 +287,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not the current version number has a patch segment.
+	 * Indicates whether the current version number has a patch segment.
 	 *
 	 * @return boolean
 	 */
@@ -395,7 +395,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number signifies an ALPHA
+	 * Indicates whether this version number signifies an ALPHA
 	 * pre-release.
 	 *
 	 * @return boolean
@@ -405,7 +405,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number represents a new aux version.
+	 * Indicates whether this version number represents a new aux version.
 	 *
 	 * @return bool
 	 */
@@ -414,7 +414,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number signifies a BETA
+	 * Indicates whether this version number signifies a BETA
 	 * pre-release.
 	 *
 	 * @return boolean
@@ -424,39 +424,39 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not a given version number is equal to this version
+	 * Indicates whether a given version number is equal to this version
 	 * number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this against.
-	 * @param int|null $element Which element(s) to compare, null for all.
+	 * @param int|null $segment Which segment(s) to compare, null for all.
 	 * @return boolean
 	 * @throws Exception
 	 */
-	public function isEqualTo($version, $element = null): bool {
+	public function isEqualTo($version, ?int $segment = null): bool {
 
 		$version = is_string($version) ? new VersionNumber($version) : $version;
 
-		$element = $element ? $element : self::MAJOR | self::MINOR | self::PATCH | self::AUX | self::PRE;
+		$segment = $segment ?: self::MAJOR | self::MINOR | self::PATCH | self::AUX | self::PRE;
 
 		$isEqual = true;
 
-		if ($element & self::MAJOR && $this->getMajor() != $version->getMajor()) {
+		if ($segment & self::MAJOR && $this->getMajor() != $version->getMajor()) {
 			$isEqual = false;
 		}
 
-		if ($element & self::MINOR && $this->getMinor() != $version->getMinor()) {
+		if ($segment & self::MINOR && $this->getMinor() != $version->getMinor()) {
 			$isEqual = false;
 		}
 
-		if ($element & self::PATCH && $this->getPatch() != $version->getPatch()) {
+		if ($segment & self::PATCH && $this->getPatch() != $version->getPatch()) {
 			$isEqual = false;
 		}
 
-		if ($element & self::AUX && $this->getAux() != $version->getAux()) {
+		if ($segment & self::AUX && $this->getAux() != $version->getAux()) {
 			$isEqual = false;
 		}
 
-		if ($element & self::PRE) {
+		if ($segment & self::PRE) {
 			if ($this->getPreReleaseType() != $version->getPreReleaseType()) {
 				$isEqual = false;
 			}
@@ -471,21 +471,21 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number is higher than another given
+	 * Indicates whether this version number is higher than another given
 	 * version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this against.
-	 * @param int|string|null $element Which element(s) to compare, null for all.
+	 * @param int|string|null $segment Which segment(s) to compare, null for all.
 	 * @return boolean
 	 * @throws Exception
 	 */
-	public function isHigherThan($version, $element = null): bool {
+	public function isHigherThan($version, $segment = null): bool {
 
 		$version = is_string($version) ? new VersionNumber($version) : $version;
 
-		$element = $element ? $element : self::MAJOR | self::MINOR | self::PATCH | self::AUX | self::PRE;
+		$segment = $segment ?: self::MAJOR | self::MINOR | self::PATCH | self::AUX | self::PRE;
 
-		if ($element & self::MAJOR) {
+		if ($segment & self::MAJOR) {
 			if ($this->getMajor() > $version->getMajor()) {
 				return true;
 			}
@@ -494,12 +494,12 @@ class VersionNumber {
 				return false;
 			}
 
-			if ($element === self::MAJOR) {
+			if ($segment === self::MAJOR) {
 				return false;
 			}
 		}
 
-		if ($element & self::MINOR) {
+		if ($segment & self::MINOR) {
 			if ($this->getMinor() > $version->getMinor()) {
 				return true;
 			}
@@ -508,12 +508,12 @@ class VersionNumber {
 				return false;
 			}
 
-			if ($element === self::MINOR) {
+			if ($segment === self::MINOR) {
 				return false;
 			}
 		}
 
-		if ($element & self::PATCH) {
+		if ($segment & self::PATCH) {
 			if ($this->getPatch() > $version->getPatch()) {
 				return true;
 			}
@@ -522,12 +522,12 @@ class VersionNumber {
 				return false;
 			}
 
-			if ($element === self::PATCH) {
+			if ($segment === self::PATCH) {
 				return false;
 			}
 		}
 
-		if ($element & self::AUX) {
+		if ($segment & self::AUX) {
 			if ($this->getAux() > $version->getAux()) {
 				return true;
 			}
@@ -536,12 +536,12 @@ class VersionNumber {
 				return false;
 			}
 
-			if ($element === self::AUX) {
+			if ($segment === self::AUX) {
 				return false;
 			}
 		}
 
-		if ($element & self::PRE) {
+		if ($segment & self::PRE) {
 			if ($this->isStable()) {
 				return !$version->isStable();
 			}
@@ -566,7 +566,7 @@ class VersionNumber {
 				return false;
 			}
 
-			if ($element === self::PRE) {
+			if ($segment === self::PRE) {
 				return false;
 			}
 		}
@@ -576,20 +576,20 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number is lower than another given
+	 * Indicates whether this version number is lower than another given
 	 * version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this against.
-	 * @param int|string|null $element Which element(s) to compare, null for all.
+	 * @param int|string|null $segment Which segment(s) to compare, null for all.
 	 * @return boolean
 	 * @throws Exception
 	 */
-	public function isLowerThan($version, $element = null): bool {
-		return !$this->isEqualTo($version, $element) && !$this->isHigherThan($version, $element);
+	public function isLowerThan($version, $segment = null): bool {
+		return !$this->isEqualTo($version, $segment) && !$this->isHigherThan($version, $segment);
 	}
 
 	/**
-	 * Indicates whether or not this version number represents a new major version.
+	 * Indicates whether this version number represents a new major version.
 	 *
 	 * @return bool
 	 */
@@ -598,7 +598,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number represents a new minor version.
+	 * Indicates whether this version number represents a new minor version.
 	 *
 	 * @return bool
 	 */
@@ -607,7 +607,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number represents a new patch version.
+	 * Indicates whether this version number represents a new patch version.
 	 *
 	 * @return bool
 	 */
@@ -616,11 +616,11 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number is considered stable.
+	 * Indicates whether this version number is considered stable.
 	 *
 	 * <p>
 	 * This version number is considered to represent a stable version if it
-	 * does not have a pre-release element and the major element number is
+	 * does not have a pre-release segment and the major segment number is
 	 * greater than 0.
 	 * </p>
 	 *
@@ -631,7 +631,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number is considered to be valid by a given standard.
+	 * Indicates whether this version number is considered to be valid by a given standard.
 	 *
 	 * @param int|Closure $standard One of the VersionNumber::STANDARD_* constants or a validator closure.
 	 * @return boolean True if valid, false otherwise
@@ -661,7 +661,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether or not this version number matches a given pattern.
+	 * Indicates whether this version number matches a given pattern.
 	 *
 	 * @param string $pattern E.g. "1.0.1", "1.*", "2.?.?"
 	 * @return bool
@@ -698,7 +698,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Parses a string containing a version number and sets its elements to be the elements of this version number.
+	 * Parses a string containing a version number and sets its segments to be the segments of this version number.
 	 *
 	 * @param string $versionString A version string on the form "MAJOR[.MINOR.[PATCH[.AUX][-alpha.N]|[-beta.N]]]".
 	 * @return void
@@ -717,9 +717,9 @@ class VersionNumber {
 			'{major}'
 		);
 
-		$elements = Substractor::extractMacros($versionString, $supportedFormats);
+		$segments = Substractor::extractMacros($versionString, $supportedFormats);
 
-		foreach ($elements as $name => $value) {
+		foreach ($segments as $name => $value) {
 			switch ($name) {
 				case 'major':
 					$this->setMajor($value);
@@ -747,7 +747,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Sets this version number to be an ALPHA pre-release.
+	 * Sets the ALPHA segment of this version number.
 	 *
 	 * @param int|string|null $number The value of the element number.
 	 * @return VersionNumber This instance
