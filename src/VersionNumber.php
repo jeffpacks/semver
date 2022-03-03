@@ -7,7 +7,7 @@ use Exception;
 use jeffpacks\substractor\Substractor;
 
 /**
- * Represents a SemVer 2.0.0 compliant version number.
+ * Represents a SemVer 2.0.0 semi-compliant version number.
  */
 class VersionNumber {
 
@@ -574,36 +574,6 @@ class VersionNumber {
 	 */
 	public function isStable(): bool {
 		return $this->getPreReleaseType() === null && $this->getMajor() > 0;
-	}
-
-	/**
-	 * Indicates whether this version number is considered to be valid by a given standard.
-	 *
-	 * @param int|Closure $standard One of the VersionNumber::STANDARD_* constants or a validator closure.
-	 * @return boolean True if valid, false otherwise
-	 */
-	public function isValid($standard): bool {
-
-		if (is_integer($standard)) {
-			switch ($standard) {
-				case self::STANDARD_SEMVER_2_0_0:
-				default:
-					$standard = function (VersionNumber $version) {
-						return
-							$version->hasMajor() &&
-							$version->hasMinor() &&
-							$version->hasPatch();
-					};
-					break;
-			}
-		}
-
-		if ($standard instanceof Closure) {
-			return $standard($this);
-		}
-
-		return false;
-
 	}
 
 	/**
