@@ -915,7 +915,7 @@ class VersionNumber {
 		if ($this->getPreReleaseType()) {
 			$string .= "-{$this->getPreReleaseType()}";
 			if ($this->getPreReleaseNumber()) {
-				$string .= "-{$this->getPreReleaseType()}";
+				$string .= ".{$this->getPreReleaseNumber()}";
 			}
 		}
 
