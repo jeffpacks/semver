@@ -120,4 +120,30 @@ class VersionNumberTest extends TestCase {
 		$this->assertEquals('1.0.0.1', (string) $versionNumber);
 
 	}
+
+	public function testDecrement() {
+
+		$versionNumber = new VersionNumber('0.0.1');
+		$versionNumber->decrement();
+		$this->assertEquals('0.0.0', (string) $versionNumber);
+		$versionNumber->decrement();
+		$this->assertEquals('0.0.0', (string) $versionNumber);
+
+		$versionNumber = new VersionNumber('3.2.1');
+		$versionNumber->decrement(VersionNumber::MAJOR);
+		$this->assertEquals('2.2.1', (string) $versionNumber);
+		$versionNumber->decrement(VersionNumber::MAJOR);
+		$this->assertEquals('1.2.1', (string) $versionNumber);
+		$versionNumber->decrement(VersionNumber::MAJOR);
+		$this->assertEquals('0.2.1', (string) $versionNumber);
+		$versionNumber->decrement(VersionNumber::MAJOR);
+		$this->assertEquals('0.2.1', (string) $versionNumber);
+
+		$versionNumber = new VersionNumber('1.0.0-alpha.2');
+		$versionNumber->decrement();
+		$this->assertEquals('1.0.0-alpha.1', (string) $versionNumber);
+		$versionNumber->decrement();
+		$this->assertEquals('1.0.0-alpha.1', (string) $versionNumber);
+
+	}
 }
