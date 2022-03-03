@@ -722,15 +722,21 @@ class VersionNumber {
 	}
 
 	/**
-	 * Sets the number of the auxiliary element.
+	 * Sets the value of the auxiliary segment.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * This method MAY affect the number of segments in this version number.
+	 *
+	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setAux($number): VersionNumber {
+	public function setAux($value): VersionNumber {
 
-		$this->aux = $this->parseNumber($number);
+		if (!$this->hasPatch()) {
+			$this->setPatch(0);
+		}
+
+		$this->aux = $this->parseNumber($value);
 
 		return $this;
 
