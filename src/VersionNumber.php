@@ -160,7 +160,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the identifier of the element that is considered to be least
+	 * Provides the identifier of the segment that is considered to be least
 	 * significant in the current version number.
 	 *
 	 * @return int|null
@@ -304,12 +304,10 @@ class VersionNumber {
 	/**
 	 * Increments the current version number with the value of 1.
 	 *
-	 * <p>
-	 * If an element identifier is given, all lesser elements are reset to zero
-	 * with the exception of any pre-release element which is removed. This
-	 * means that incrementing the MINOR element of a version number
-	 * 5.2.1-beta.2 yields the version number 5.3.0.
-	 * </p>
+	 * If a segment identifier is given, all lesser segments are reset to zero and pre-release segments are removed.
+	 * Incrementing the MINOR segment of a version number 5.2.1-beta.2 yields the version number 5.3.0. If no segment
+	 * identifier is given, the least significant identifier will be incremented. Pre-release version numbers
+	 * without a pre-release number (e.g. 5.2.1-alpha, 2.1.4-beta) remain unchanged.
 	 *
 	 * @param int|null $element VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant.
 	 * @return VersionNumber This instance
@@ -734,19 +732,19 @@ class VersionNumber {
 	/**
 	 * Sets the ALPHA segment of this version number.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setAlpha($number = null): VersionNumber {
+	public function setAlpha($value = null): VersionNumber {
 
 		$this->preReleaseType = self::ALPHA;
 
-		if ($number === null && $this->preReleaseNumber === null) {
-			$number = 1;
+		if ($value === null && $this->preReleaseNumber === null) {
+			$value = 1;
 		}
 
-		$this->preReleaseNumber = $this->parseNumber($number);
+		$this->preReleaseNumber = $this->parseNumber($value);
 
 		return $this;
 
@@ -768,51 +766,51 @@ class VersionNumber {
 	}
 
 	/**
-	 * Sets this version number to be a BETA pre-release.
+	 * Sets the BETA segment of this version number.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * @param int|string|null $value The value of the segment.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setBeta($number = null): VersionNumber {
+	public function setBeta($value = null): VersionNumber {
 
 		$this->preReleaseType = self::BETA;
 
-		if ($number === null && $this->preReleaseNumber === null) {
-			$number = 1;
+		if ($value === null && $this->preReleaseNumber === null) {
+			$value = 1;
 		}
 
-		$this->preReleaseNumber = $this->parseNumber($number);
+		$this->preReleaseNumber = $this->parseNumber($value);
 
 		return $this;
 
 	}
 
 	/**
-	 * Sets the number of the major element.
+	 * Sets the value of the major segment.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setMajor($number): VersionNumber {
+	public function setMajor($value): VersionNumber {
 
-		$this->major = $this->parseNumber($number) ?? 0;
+		$this->major = $this->parseNumber($value) ?? 0;
 
 		return $this;
 
 	}
 
 	/**
-	 * Sets the number of the minor element.
+	 * Sets the value of the minor segment.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setMinor($number): VersionNumber {
+	public function setMinor($value): VersionNumber {
 
-		$this->minor = $this->parseNumber($number);
+		$this->minor = $this->parseNumber($value);
 
 		return $this;
 
@@ -834,22 +832,22 @@ class VersionNumber {
 	}
 
 	/**
-	 * Sets the pre-release element number.
+	 * Sets the value of the pre-release segment.
 	 *
-	 * @param int|string|null $number The value of the element number.
+	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function setPreReleaseNumber($number): VersionNumber {
+	public function setPreReleaseNumber($value): VersionNumber {
 
-		$this->preReleaseNumber = $this->parseNumber($number);
+		$this->preReleaseNumber = $this->parseNumber($value);
 
 		return $this;
 
 	}
 
 	/**
-	 * Sets the pre-release element type.
+	 * Sets the pre-release segment type.
 	 *
 	 * @param string|null $type One of the VersionNumber::ALPHA|BETA constants or null for none.
 	 * @return VersionNumber This instance
