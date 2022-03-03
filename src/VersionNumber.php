@@ -47,6 +47,45 @@ class VersionNumber {
 	}
 
 	/**
+	 * Adjusts a given segment with a specific delta value.
+	 *
+	 * This method will not affect the number of segments in this version number.
+	 *
+	 * @param int $segment VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE.
+	 * @param int $delta A negative integer to decrease the segment, a positive integer to increase the segment.
+	 * @return VersionNumber This instance
+	 */
+	public function adjust(int $segment, int $delta): VersionNumber {
+
+		if (!$this->hasSegment($segment)) {
+			return $this;
+		}
+
+		switch ($segment) {
+			case $this::MAJOR:
+				$this->major = ($this->major + $delta) >= 0 ? $this->major + $delta : 0;
+				break;
+			case $this::MINOR:
+				$this->minor = ($this->minor + $delta) >= 0 ? $this->minor + $delta : 0;
+				break;
+			case $this::PATCH:
+				$this->patch = ($this->patch + $delta) >= 0 ? $this->patch + $delta : 0;
+				break;
+			case $this::AUX:
+				$this->aux = ($this->aux + $delta) >= 0 ? $this->aux + $delta : 0;
+				break;
+			case $this::PRE:
+				if (is_int($this->preReleaseNumber)) {
+					$this->preReleaseNumber = ($this->preReleaseNumber + $delta) >= 1 ? $this->preReleaseNumber + $delta : 0;
+				}
+				break;
+		}
+
+		return $this;
+
+	}
+
+	/**
 	 * Compares this version number with another version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this version number against.
@@ -254,6 +293,35 @@ class VersionNumber {
 	 */
 	public function hasPatch(): bool {
 		return $this->patch !== null;
+	}
+
+	/**
+	 * Indicates whether the current version number has a pre-release segment.
+	 *
+	 * @return boolean
+	 */
+	public function hasPre(): bool {
+		return $this->preReleaseType !== null;
+	}
+
+	/**
+	 * Indicates whether this version number has a specific segment.
+	 *
+	 * @param int $segment VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE.
+	 * @return bool
+	 */
+	public function hasSegment(int $segment): bool {
+
+		switch ($segment) {
+			case $this::MAJOR: return true;
+			case $this::MINOR: return is_int($this->minor);
+			case $this::PATCH: return is_int($this->patch);
+			case $this::AUX: return is_int($this->aux);
+			case $this::PRE: return is_string($this->preReleaseType);
+		}
+
+		return false;
+
 	}
 
 	/**
@@ -804,6 +872,39 @@ class VersionNumber {
 	private function setPreReleaseType(?string $type): VersionNumber {
 
 		$this->preReleaseType = $type;
+
+		return $this;
+
+	}
+
+	/**
+	 * Sets a given segment of this version number to a specific value.
+	 *
+	 * @param int $segment
+	 * @param int $value A non-negative integer.
+	 * @return VersionNumber This instance
+	 */
+	public function setSegment(int $segment, int $value): VersionNumber {
+
+		switch ($segment) {
+			case $this::MAJOR:
+				$this->major = $value;
+				break;
+			case $this::MINOR:
+				$this->minor = $value;
+				break;
+			case $this::PATCH:
+				$this->patch = $value;
+				break;
+			case $this::AUX:
+				$this->aux = $value;
+				break;
+			case $this::PRE:
+				if ($this->preReleaseNumber !== null) {
+					$this->preReleaseNumber = $value;
+					break;
+				}
+		}
 
 		return $this;
 
