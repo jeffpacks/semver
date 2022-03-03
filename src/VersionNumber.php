@@ -76,7 +76,7 @@ class VersionNumber {
 				break;
 			case $this::PRE:
 				if (is_int($this->preReleaseNumber)) {
-					$this->preReleaseNumber = ($this->preReleaseNumber + $delta) >= 1 ? $this->preReleaseNumber + $delta : 0;
+					$this->preReleaseNumber = ($this->preReleaseNumber + $delta) >= 1 ? $this->preReleaseNumber + $delta : 1;
 				}
 				break;
 		}
