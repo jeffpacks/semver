@@ -309,60 +309,31 @@ class VersionNumber {
 	 * identifier is given, the least significant identifier will be incremented. Pre-release version numbers
 	 * without a pre-release number (e.g. 5.2.1-alpha, 2.1.4-beta) remain unchanged.
 	 *
-	 * @param int|null $element VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant.
+	 * @param int|null $segment VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant segment.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function increment($element = null): VersionNumber {
+	public function increment(?int $segment = null): VersionNumber {
 
-		$element = $element ?? $this->getLeastSignificantIdentifier();
+		$segment = $segment ?? $this->getLeastSignificantIdentifier();
 
-		switch ($element) {
-			case self::MAJOR:
-				$this->setMajor($this->getMajor() + 1);
-				if ($this->hasMinor()) {
-					$this->setMinor(0);
-				}
-				if ($this->hasPatch()) {
-					$this->setPatch(0);
-				}
-				if ($this->hasAux()) {
-					$this->setAux(0);
-				}
-				$this->setStable();
-				break;
+		if ($this->hasSegment($segment)) {
+			$this->adjust($segment, 1);
 
-			case self::MINOR:
-				$this->setMinor($this->getMinor() + 1);
-				if ($this->hasPatch()) {
-					$this->setPatch(0);
+			# Zero out any lesser segments, but never a pre-release segment
+			if ($segment < $this::PRE) {
+				while ($segment < $this::AUX) {
+					$segment *= 2;
+					if (!$this->hasSegment($segment)) {
+						break;
+					}
+					$this->setSegment($segment, 0);
 				}
-				if ($this->hasAux()) {
-					$this->setAux(0);
-				}
-				$this->setStable();
-				break;
 
-			case self::PATCH:
-				$this->setPatch($this->getPatch() + 1);
-				if ($this->hasAux()) {
-					$this->setAux(0);
-				}
-				$this->setStable();
-				break;
-
-			case self::AUX:
-				$this->setAux($this->getAux() + 1);
-				$this->setStable();
-				break;
-
-			case self::PRE:
-				if ($this->isStable()) {
-					$this->setAlpha(1);
-				} else {
-					$this->setPreReleaseNumber($this->getPreReleaseNumber() + 1);
-				}
-				break;
+				# Remove any pre-release segment when the specified segment is major, minor, patch or aux
+				$this->preReleaseNumber = null;
+				$this->preReleaseType = null;
+			}
 		}
 
 		return $this;
