@@ -898,11 +898,19 @@ class VersionNumber {
 		$this->preReleaseType = null;
 		$this->preReleaseNumber = null;
 
-		// If the major number is zero, this version number is considered
-		// non-stable (see https://semver.org/#spec-item-4) and the first stable
-		// version is always 1.0.0.
+		# If the major segment is zero, this version number is considered non-stable
+		# (see https://semver.org/#spec-item-4) and the first stable version is always 1[.0[.0[.0]]]
 		if ($this->getMajor() === 0) {
-			$this->increment($this::MAJOR);
+			$this->setMajor(1);
+			if ($this->hasMinor()) {
+				$this->setMinor(0);
+			}
+			if ($this->hasPatch()) {
+				$this->setPatch(0);
+			}
+			if ($this->hasAux()) {
+				$this->setAux(0);
+			}
 		}
 
 		return $this;
