@@ -1,5 +1,5 @@
 # About
-The VersionNumber class of this library represents a SemVer 2.0.0 compliant version number. The class offers methods for querying the version number it represents as well as methods comparison and manipulation. 
+The VersionNumber class of this library represents a SemVer 2.0.0 semi-compliant version number. The class offers methods for querying the version number it represents as well as methods for comparison and manipulation. 
 
 # Requirements
 This library requires PHP 7.4 and jeffpacks/substractor.
