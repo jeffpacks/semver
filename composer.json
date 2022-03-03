@@ -13,10 +13,14 @@
 		"php": "^7.4",
 		"jeffpacks/substractor": "^1.0"
 	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.5"
+	},
 	"minimum-stability": "stable",
 	"autoload": {
 		"psr-4": {
-			"jeffpacks\\semver\\": "src"
+			"jeffpacks\\semver\\": "src",
+			"jeffpacks\\semver\\tests\\": "tests"
 		}
 	}
 }
