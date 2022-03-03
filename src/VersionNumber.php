@@ -106,38 +106,15 @@ class VersionNumber {
 	/**
 	 * Decrements the current version number with the value of 1.
 	 *
-	 * @param int|null $element VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant.
+	 * This method will – unlike VersionNumber::increment() – only affect the specified (or least significant) segment
+	 * and will never affect the number of segments in this version number.
+	 *
+	 * @param int|null $segment VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant.
 	 * @return VersionNumber This instance
 	 * @throws Exception
 	 */
-	public function decrement($element = null): VersionNumber {
-
-		$element = $element ?? $this->getLeastSignificantIdentifier();
-
-		switch ($element) {
-			case self::MAJOR:
-				$this->major = $this->major == 0 ? $this->major: $this->major - 1; # weak comparator intended to capture NULL and zero
-				break;
-
-			case self::MINOR:
-				$this->minor = $this->minor == 0 ? $this->minor: $this->minor - 1; # weak comparator intended to capture NULL and zero
-				break;
-
-			case self::PATCH:
-				$this->patch = $this->patch == 0 ? $this->patch: $this->patch - 1; # weak comparator intended to capture NULL and zero
-				break;
-
-			case self::AUX:
-				$this->aux = $this->aux == 0 ? $this->aux: $this->aux - 1; # weak comparator intended to capture NULL and zero
-				break;
-
-			case self::PRE:
-				$this->preReleaseNumber = $this->preReleaseNumber == 0 ? $this->preReleaseNumber: $this->preReleaseNumber - 1; # weak comparator intended to capture NULL and zero
-				break;
-		}
-
-		return $this;
-
+	public function decrement(?int $segment = null): VersionNumber {
+		return $this->adjust($segment ?? $this->getLeastSignificantIdentifier(), -1);
 	}
 
 	/**
