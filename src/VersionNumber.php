@@ -488,20 +488,20 @@ class VersionNumber {
 		}
 
 		if ($segment & self::PRE) {
-			if ($this->isStable()) {
-				return !$version->isStable();
+			if ($this->hasPre() && !$version->hasPre()) {
+				return false;
 			}
 
-			if ($version->isStable()) {
-				return $this->isStable();
+			if ($version->hasPre() && !$this->hasPre()) {
+				return true;
+			}
+
+			if ($this->isBeta() && $version->isAlpha()) {
+				return true;
 			}
 
 			if ($this->isAlpha() && $version->isBeta()) {
-				return true;
-			}
-
-			if ($this->isBeta() < $version->isAlpha()) {
-				return true;
+				return false;
 			}
 
 			if ($this->getPreReleaseNumber() > $version->getPreReleaseNumber()) {
