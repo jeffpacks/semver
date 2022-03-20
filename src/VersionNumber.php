@@ -641,7 +641,7 @@ class VersionNumber {
 			'{major}'
 		);
 
-		$segments = Substractor::extractMacros($versionString, $supportedFormats);
+		$segments = Substractor::macros($versionString, $supportedFormats);
 
 		foreach ($segments as $name => $value) {
 			switch ($name) {
