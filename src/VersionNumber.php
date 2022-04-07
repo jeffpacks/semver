@@ -236,7 +236,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether the current version number has a aux segment.
+	 * Indicates whether the current version number has an aux segment.
 	 *
 	 * @return boolean
 	 */
