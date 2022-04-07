@@ -2,7 +2,7 @@
 The VersionNumber class of this library represents a [SemVer 2.0.0](https://semver.org/) semi-compliant version number. The class offers methods for querying the version number it represents as well as methods for comparison and manipulation.
 
 # Requirements
-This library requires PHP 7.4 and jeffpacks/substractor.
+This library requires PHP 7.4/8.0 and jeffpacks/substractor.
 
 # Installing
 Run `composer require jeffpacks/semver` in your project's root directory and `use \jeffpacks\semver\VersionNumber` in your PHP script/class.
