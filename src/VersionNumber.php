@@ -2,7 +2,6 @@
 
 namespace jeffpacks\semver;
 
-use Closure;
 use Exception;
 use jeffpacks\substractor\Substractor;
 
