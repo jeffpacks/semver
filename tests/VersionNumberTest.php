@@ -287,4 +287,27 @@ class VersionNumberTest extends TestCase {
 		$this->assertTrue($versionNumber->matches('1.?.13'));
 
 	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function testSort() {
+
+		$ascendingOrder = ['1.0', '1.0', '1.1', '1.2', '1.10', '2.0', '2.1', '2.1.0', '2.2', '2.10'];
+		$descendingOrder = array_reverse($ascendingOrder);
+		$randomOrder = $ascendingOrder;
+		shuffle($randomOrder);
+
+		$this->assertEquals($ascendingOrder, VersionNumber::sort($randomOrder));
+		$this->assertEquals($descendingOrder, VersionNumber::sort($randomOrder, true));
+
+		$ascendingOrder = array_map(fn(string $versionNumber) => new VersionNumber($versionNumber), $ascendingOrder);
+		$descendingOrder = array_reverse($ascendingOrder);
+		$randomOrder = $ascendingOrder;
+		shuffle($randomOrder);
+
+		$this->assertEquals($ascendingOrder, VersionNumber::sort($randomOrder));
+		$this->assertEquals($descendingOrder, VersionNumber::sort($randomOrder, true));
+
+	}
 }

@@ -53,6 +53,10 @@ $betaVersion->increment(); # 1.0.3-beta.4
 $stableVersion->decrement(VersionNumber::MINOR); # 1.1.4
 $alphaVersion->setBeta(); # 1.2.0-beta.1
 $alphaVersion->setBeta(5); # 1.2.0-beta.5
+
+VersionNumber::sort(['1.2', '1.10', '1.1']); # ['1.1', '1.2, '1.10']
+VersionNumber::sort(['1.2', '1.10', '1.1'], true); # ['1.10', '1.2, '1.1']
+VersionNumber::sort([$betaVersion, $alphaVersion]); # [$alphaVersion, $betaVersion]
 ```
 
 # Semantic Versioning compliance

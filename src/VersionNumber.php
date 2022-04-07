@@ -901,6 +901,35 @@ class VersionNumber {
 	}
 
 	/**
+	 * Provides a sorted array of version numbers.
+	 *
+	 * @param string[]|VersionNumber[] $versionNumbers Zero or more version numbers.
+	 * @param bool $desc True to sort in a descending order, false for an ascending order.
+	 * @return string[]|VersionNumber[]
+	 * @throws Exception
+	 */
+	public static function sort(array $versionNumbers, bool $desc = false): array {
+
+		$result = $versionNumbers;
+
+		usort($result, function($a, $b) use ($desc) {
+			if (is_string($a)) {
+				$a = new VersionNumber($a);
+			}
+			if (is_string($b)) {
+				$b = new VersionNumber($b);
+			}
+			if ($a instanceof VersionNumber && $b instanceof VersionNumber) {
+				return $desc ? $b->compare($a) : $a->compare($b);
+			}
+			return 0;
+		});
+
+		return $result;
+
+	}
+
+	/**
 	 * Provides a string representation of this version number.
 	 *
 	 * @return string The version number
