@@ -406,7 +406,7 @@ class VersionNumber {
 				$isEqual = false;
 			}
 
-			if ($this->getPreReleaseNumber() != $version->getPreReleaseType()) {
+			if ($this->getPreReleaseNumber() != $version->getPreReleaseNumber()) {
 				$isEqual = false;
 			}
 		}

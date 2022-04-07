@@ -2,6 +2,7 @@
 
 namespace jeffpacks\semver\tests;
 
+use Exception;
 use jeffpacks\semver\VersionNumber;
 use PHPUnit\Framework\TestCase;
 
@@ -102,6 +103,40 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws Exception
+	 */
+	public function testIsEqualTo() {
+
+		$versionNumber = new VersionNumber('0.1.0');
+		$this->assertTrue($versionNumber->isEqualTo('0.1.0'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1.0-alpha'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1.0-beta.1'));
+
+		$versionNumber = new VersionNumber('1.1.0');
+		$this->assertTrue($versionNumber->isEqualTo('1.1.0'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-alpha'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-beta'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-alpha.1'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-beta.1'));
+
+		$versionNumber = new VersionNumber('1.0.0-alpha.1');
+		$this->assertTrue($versionNumber->isEqualTo('1.0.0-alpha.1'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1.0-alpha'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1.0-beta'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1.0-alpha.2'));
+
+		$versionNumber = new VersionNumber('1.1.0-alpha.2');
+		$this->assertTrue($versionNumber->isEqualTo('1.1.0-alpha.2'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-alpha.3'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-beta'));
+		$this->assertFalse($versionNumber->isEqualTo('1.1.0-beta.1'));
+
+	}
+
+	/**
+	 * @throws Exception
+	 */
 	public function testIsHigherThan() {
 
 		$versionNumber = new VersionNumber('0.1.0');
