@@ -79,6 +79,12 @@ A version number with a MAJOR segment set to `0` is interpreted by this library 
 
 Which of `0.0.0` and `0.0.0-alpha.1` is higher is not addressed by [SemVer 2.0.0](https://semver.org/), so the rule of thumb for this library is that a version number without a pre-release segment (`alpha.1` in this case) is always considered higher than a version number with a pre-release segment. In short, `0.0.0` > `0.0.0-beta.1` > `0.0.0-alpha.1`.
 
+# Comparison
+This library provides methods for comparing version numbers of different version core formats. The comparison is done based on the following rules:
+1. the numeric value of the version number (e.g. `2.1` has a higher numeric value than `1.3`)
+2. the number of segments in the version core (e.g `1.2` is lower than `1.2.0`)
+3. the presence of a pre-release number (e.g. `1.2.3-beta` is lower than `1.2.3-beta.1`)
+
 # Authors
 * [Johan Fredrik Varen](https://github.com/JohanFredrikVaren)
 

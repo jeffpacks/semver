@@ -385,24 +385,24 @@ class VersionNumber {
 
 		$isEqual = true;
 
-		if ($segment & self::MAJOR && $this->getMajor() != $version->getMajor()) {
+		if ($segment & self::MAJOR && $this->getMajor() !== $version->getMajor()) {
 			$isEqual = false;
 		}
 
-		if ($segment & self::MINOR && $this->getMinor() != $version->getMinor()) {
+		if ($segment & self::MINOR && $this->getMinor() !== $version->getMinor()) {
 			$isEqual = false;
 		}
 
-		if ($segment & self::PATCH && $this->getPatch() != $version->getPatch()) {
+		if ($segment & self::PATCH && $this->getPatch() !== $version->getPatch()) {
 			$isEqual = false;
 		}
 
-		if ($segment & self::AUX && $this->getAux() != $version->getAux()) {
+		if ($segment & self::AUX && $this->getAux() !== $version->getAux()) {
 			$isEqual = false;
 		}
 
 		if ($segment & self::PRE) {
-			if ($this->getPreReleaseType() != $version->getPreReleaseType()) {
+			if ($this->getPreReleaseType() !== $version->getPreReleaseType()) {
 				$isEqual = false;
 			}
 
@@ -449,6 +449,10 @@ class VersionNumber {
 				return true;
 			}
 
+			if ($this->hasMinor() && !$version->hasMinor()) {
+				return true;
+			}
+
 			if ($this->getMinor() < $version->getMinor()) {
 				return false;
 			}
@@ -463,6 +467,11 @@ class VersionNumber {
 				return true;
 			}
 
+			if ($this->hasPatch() && !$version->hasPatch()) {
+				return true;
+			}
+
+
 			if ($this->getPatch() < $version->getPatch()) {
 				return false;
 			}
@@ -476,6 +485,11 @@ class VersionNumber {
 			if ($this->getAux() > $version->getAux()) {
 				return true;
 			}
+
+			if ($this->hasAux() && !$version->hasAux()) {
+				return true;
+			}
+
 
 			if ($this->getAux() < $version->getAux()) {
 				return false;

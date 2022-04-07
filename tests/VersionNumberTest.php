@@ -34,17 +34,23 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function testCompare() {
 
 		$versionNumber = new VersionNumber('0.1.0');
 
 		$this->assertEquals(0, $versionNumber->compare(new VersionNumber('0.1.0')));
 		$this->assertEquals(0, $versionNumber->compare('0.1.0'));
-		$this->assertEquals(0, $versionNumber->compare('0.1'));
+		$this->assertEquals(1, $versionNumber->compare('0.1'));
 		$this->assertEquals(1, $versionNumber->compare('0.1-beta'));
 
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function testDecrement() {
 
 		$versionNumber = new VersionNumber('0.0.1');
@@ -71,6 +77,9 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function testIncrement() {
 
 		$versionNumber = new VersionNumber('1');
@@ -110,6 +119,8 @@ class VersionNumberTest extends TestCase {
 
 		$versionNumber = new VersionNumber('0.1.0');
 		$this->assertTrue($versionNumber->isEqualTo('0.1.0'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1'));
+		$this->assertFalse($versionNumber->isEqualTo('0.1.0.0'));
 		$this->assertFalse($versionNumber->isEqualTo('0.1.0-alpha'));
 		$this->assertFalse($versionNumber->isEqualTo('0.1.0-beta.1'));
 
@@ -140,23 +151,29 @@ class VersionNumberTest extends TestCase {
 	public function testIsHigherThan() {
 
 		$versionNumber = new VersionNumber('0.1.0');
+		$this->assertTrue($versionNumber->isHigherThan('0.1'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-alpha'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-beta'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-alpha.1'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-beta.1'));
 
 		$versionNumber = new VersionNumber('1.1.0');
+		$this->assertTrue($versionNumber->isHigherThan('1.1'));
 		$this->assertTrue($versionNumber->isHigherThan('1.1.0-alpha'));
 		$this->assertTrue($versionNumber->isHigherThan('1.1.0-beta'));
 		$this->assertTrue($versionNumber->isHigherThan('1.1.0-alpha.1'));
 		$this->assertTrue($versionNumber->isHigherThan('1.1.0-beta.1'));
 
 		$versionNumber = new VersionNumber('0.1.0-beta.1');
+		$this->assertTrue($versionNumber->isHigherThan('0.1-alpha'));
+		$this->assertTrue($versionNumber->isHigherThan('0.1-beta'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-alpha'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-beta'));
 		$this->assertTrue($versionNumber->isHigherThan('0.1.0-alpha.2'));
 
 		$versionNumber = new VersionNumber('1.1.0-alpha.2');
+		$this->assertTrue($versionNumber->isHigherThan('0.1-alpha'));
+		$this->assertTrue($versionNumber->isHigherThan('0.1-beta'));
 		$this->assertFalse($versionNumber->isHigherThan('1.1.0-alpha.3'));
 		$this->assertFalse($versionNumber->isHigherThan('1.1.0-beta'));
 		$this->assertFalse($versionNumber->isHigherThan('1.1.0-beta.1'));
