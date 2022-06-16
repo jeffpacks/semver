@@ -240,11 +240,14 @@ class VersionNumber {
 	 * Provides a sorting callback function that is compatible with PHPs sorting functions.
 	 *
 	 * @param bool $desc True to sort descendingly, false to sort ascendingly.
+	 * @param Closure|null $accessor A callback function that will return the value of each version number.
 	 * @return Closure
 	 */
-	public static function getSorter(bool $desc = false): Closure {
+	public static function getSorter(bool $desc = false, ?Closure $accessor = null): Closure {
 
-		return function($a, $b) use ($desc) {
+		return function($a, $b) use ($desc, $accessor) {
+			$a = $accessor ? $accessor($a) : $a;
+			$b = $accessor ? $accessor($b) : $b;
 			if (is_string($a)) {
 				$a = new VersionNumber($a);
 			}

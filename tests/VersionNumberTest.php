@@ -310,4 +310,59 @@ class VersionNumberTest extends TestCase {
 		$this->assertEquals($descendingOrder, VersionNumber::sort($randomOrder, true));
 
 	}
+
+	public function testGetSorter() {
+
+		# Test with version number strings
+		$ascendingOrder = ['1.0', '1.0', '1.1', '1.2', '1.10', '2.0', '2.1', '2.1.0', '2.2', '2.10'];
+		$descendingOrder = array_reverse($ascendingOrder);
+		$randomOrder = $ascendingOrder;
+
+		shuffle($randomOrder);
+		$ascendingSorter = VersionNumber::getSorter();
+		usort($randomOrder, $ascendingSorter);
+		$this->assertEquals($ascendingOrder, $randomOrder);
+
+		shuffle($randomOrder);
+		$descendingSorter = VersionNumber::getSorter(true);
+		usort($randomOrder, $descendingSorter);
+		$this->assertEquals($descendingOrder, $randomOrder);
+
+		# Test with VersionNumber objects
+		$ascendingOrder = array_map(fn(string $versionNumber) => new VersionNumber($versionNumber), $ascendingOrder);
+		$descendingOrder = array_reverse($ascendingOrder);
+		$randomOrder = $ascendingOrder;
+
+		shuffle($randomOrder);
+		$ascendingSorter = VersionNumber::getSorter();
+		usort($randomOrder, $ascendingSorter);
+		$this->assertEquals($ascendingOrder, $randomOrder);
+
+		shuffle($randomOrder);
+		$descendingSorter = VersionNumber::getSorter(true);
+		usort($randomOrder, $descendingSorter);
+		$this->assertEquals($descendingOrder, $randomOrder);
+
+		# Test with version numbers stored in objects
+		$ascendingOrder = array_map(
+			fn(string $versionNumber) => (object) ['version' => $versionNumber],
+			['1.0', '1.0', '1.1', '1.2', '1.10', '2.0', '2.1', '2.1.0', '2.2', '2.10']
+		);
+		$descendingOrder = array_reverse($ascendingOrder);
+		$randomOrder = $ascendingOrder;
+
+		$accessor = fn($object) => $object->version;
+
+		shuffle($randomOrder);
+		$ascendingSorter = VersionNumber::getSorter(false, $accessor);
+		usort($randomOrder, $ascendingSorter);
+		$this->assertEquals($ascendingOrder, $randomOrder);
+
+		shuffle($randomOrder);
+		$descendingSorter = VersionNumber::getSorter(true, $accessor);
+		usort($randomOrder, $descendingSorter);
+		$this->assertEquals($descendingOrder, $randomOrder);
+
+	}
+
 }
