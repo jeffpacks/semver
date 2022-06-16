@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2022-06-16
+
+### Added
+- VersionNumber::getSorter()
+
 ## [3.0.0] - 2022-04-07
 The breaking change in this release lies is the comparison between version numbers of different version core formats. The version numbers `1.0` and `1.0.0` have previously been regarded as equal, while this release considers `1.0` < `1.0.0` to be true. Please refer to README.md for more details concerning comparison.
 
