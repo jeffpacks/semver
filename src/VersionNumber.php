@@ -2,6 +2,7 @@
 
 namespace jeffpacks\semver;
 
+use Closure;
 use Exception;
 use jeffpacks\substractor\Substractor;
 
@@ -233,6 +234,29 @@ class VersionNumber {
 	 */
 	public function getPreReleaseType(): ?string {
 		return $this->preReleaseType;
+	}
+
+	/**
+	 * Provides a sorting callback function that is compatible with PHPs sorting functions.
+	 *
+	 * @param bool $desc True to sort descendingly, false to sort ascendingly.
+	 * @return Closure
+	 */
+	public static function getSorter(bool $desc = false): Closure {
+
+		return function($a, $b) use ($desc) {
+			if (is_string($a)) {
+				$a = new VersionNumber($a);
+			}
+			if (is_string($b)) {
+				$b = new VersionNumber($b);
+			}
+			if ($a instanceof VersionNumber && $b instanceof VersionNumber) {
+				return $desc ? $b->compare($a) : $a->compare($b);
+			}
+			return 0;
+		};
+
 	}
 
 	/**
@@ -912,18 +936,7 @@ class VersionNumber {
 
 		$result = $versionNumbers;
 
-		usort($result, function($a, $b) use ($desc) {
-			if (is_string($a)) {
-				$a = new VersionNumber($a);
-			}
-			if (is_string($b)) {
-				$b = new VersionNumber($b);
-			}
-			if ($a instanceof VersionNumber && $b instanceof VersionNumber) {
-				return $desc ? $b->compare($a) : $a->compare($b);
-			}
-			return 0;
-		});
+		usort($result, self::getSorter($desc));
 
 		return $result;
 
