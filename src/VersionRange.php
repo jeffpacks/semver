@@ -35,14 +35,14 @@ class VersionRange {
 	 * Provides the highest of a given set of version numbers that falls within this range.
 	 *
 	 * @param string[]|VersionNumber[] $versionNumbers
-	 * @return VersionNumber|null
+	 * @return string|VersionNumber|null
 	 */
-	public function getHighestMatch(array $versionNumbers): ?VersionNumber {
+	public function getHighestMatch(array $versionNumbers)  {
 
 		foreach (VersionNumber::sort($versionNumbers, true) as $versionNumber) {
 			if ($this->isInRange($versionNumber)) {
 				try {
-					return $versionNumber instanceof VersionNumber ? $versionNumber : new VersionNumber($versionNumber);
+					return $versionNumber;
 				} catch (InvalidFormatException $e) {
 					throw new Error('Internal error. This is a bug.', 0, $e);
 				}
