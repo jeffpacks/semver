@@ -2,8 +2,9 @@
 
 namespace jeffpacks\semver\tests;
 
-use Exception;
 use jeffpacks\semver\VersionNumber;
+use jeffpacks\semver\exceptions\InvalidFormatException;
+use PharIo\Version\Version;
 use PHPUnit\Framework\TestCase;
 
 class VersionNumberTest extends TestCase {
@@ -34,9 +35,6 @@ class VersionNumberTest extends TestCase {
 
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public function testCompare() {
 
 		$versionNumber = new VersionNumber('0.1.0');
@@ -48,9 +46,6 @@ class VersionNumberTest extends TestCase {
 
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public function testDecrement() {
 
 		$versionNumber = new VersionNumber('0.0.1');
@@ -77,9 +72,6 @@ class VersionNumberTest extends TestCase {
 
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public function testIncrement() {
 
 		$versionNumber = new VersionNumber('1');
@@ -112,9 +104,64 @@ class VersionNumberTest extends TestCase {
 
 	}
 
-	/**
-	 * @throws Exception
-	 */
+	public function testIsValid() {
+
+		$this->assertTrue(VersionNumber::isValid('0'));
+		$this->assertTrue(VersionNumber::isValid('0-alpha'));
+		$this->assertTrue(VersionNumber::isValid('0-alpha.0'));
+		$this->assertTrue(VersionNumber::isValid('0-alpha.1'));
+		$this->assertTrue(VersionNumber::isValid('0-beta'));
+		$this->assertTrue(VersionNumber::isValid('0-beta.0'));
+		$this->assertTrue(VersionNumber::isValid('0-beta.1'));
+
+		$this->assertTrue(VersionNumber::isValid('1'));
+		$this->assertTrue(VersionNumber::isValid('1-alpha'));
+		$this->assertTrue(VersionNumber::isValid('1-alpha.0'));
+		$this->assertTrue(VersionNumber::isValid('1-alpha.1'));
+		$this->assertTrue(VersionNumber::isValid('1-beta'));
+		$this->assertTrue(VersionNumber::isValid('1-beta.0'));
+		$this->assertTrue(VersionNumber::isValid('1-beta.1'));
+
+		$this->assertTrue(VersionNumber::isValid('0.1'));
+		$this->assertTrue(VersionNumber::isValid('0.1-alpha'));
+		$this->assertTrue(VersionNumber::isValid('0.1-alpha.0'));
+		$this->assertTrue(VersionNumber::isValid('0.1-alpha.1'));
+		$this->assertTrue(VersionNumber::isValid('0.1-beta'));
+		$this->assertTrue(VersionNumber::isValid('0.1-beta.0'));
+		$this->assertTrue(VersionNumber::isValid('0.1-beta.1'));
+
+		$this->assertTrue(VersionNumber::isValid('1.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0-alpha'));
+		$this->assertTrue(VersionNumber::isValid('1.0-alpha.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0-alpha.1'));
+		$this->assertTrue(VersionNumber::isValid('1.0-beta'));
+		$this->assertTrue(VersionNumber::isValid('1.0-beta.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0-beta.1'));
+
+		$this->assertTrue(VersionNumber::isValid('1.0.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0-alpha'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0-alpha.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0-alpha.1'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0-beta'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0-beta.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0-beta.1'));
+
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1-alpha'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1-alpha.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1-alpha.1'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1-beta'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1-beta.0'));
+		$this->assertTrue(VersionNumber::isValid('1.0.0.1-beta.1'));
+
+		$this->assertFalse(VersionNumber::isValid(''));
+		$this->assertFalse(VersionNumber::isValid('1.'));
+		$this->assertFalse(VersionNumber::isValid('.'));
+		$this->assertFalse(VersionNumber::isValid('.1'));
+		$this->assertFalse(VersionNumber::isValid('a.b.c'));
+
+	}
+
 	public function testIsEqualTo() {
 
 		$versionNumber = new VersionNumber('0.1.0');
@@ -145,9 +192,6 @@ class VersionNumberTest extends TestCase {
 
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public function testIsHigherThan() {
 
 		$versionNumber = new VersionNumber('0.1.0');
@@ -288,9 +332,6 @@ class VersionNumberTest extends TestCase {
 
 	}
 
-	/**
-	 * @throws Exception
-	 */
 	public function testSort() {
 
 		$ascendingOrder = ['1.0', '1.0', '1.1', '1.2', '1.10', '2.0', '2.1', '2.1.0', '2.2', '2.10'];
@@ -311,6 +352,9 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws InvalidFormatException
+	 */
 	public function testGetSorter() {
 
 		# Test with version number strings

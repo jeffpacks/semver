@@ -2,8 +2,10 @@
 
 namespace jeffpacks\semver;
 
+use Error;
 use Closure;
-use Exception;
+use jeffpacks\semver\exceptions\InvalidFormatException;
+use jeffpacks\semver\exceptions\InvalidNumberException;
 use jeffpacks\substractor\Substractor;
 
 /**
@@ -18,8 +20,22 @@ class VersionNumber {
 	private ?string $preReleaseType = null;
 	private ?int $preReleaseNumber = null;
 
-	# Version standards
-	const STANDARD_SEMVER_2_0_0 = 1;
+	const SUPPORTED_FORMATS = [
+		'{major}.{minor}.{patch}.{aux}-{preType}.{preNumber}',
+		'{major}.{minor}.{patch}-{preType}.{preNumber}',
+		'{major}.{minor}-{preType}.{preNumber}',
+		'{major}-{preType}.{preNumber}',
+
+		'{major}.{minor}.{patch}.{aux}-{preType}',
+		'{major}.{minor}.{patch}-{preType}',
+		'{major}.{minor}-{preType}',
+		'{major}-{preType}',
+
+		'{major}.{minor}.{patch}.{aux}',
+		'{major}.{minor}.{patch}',
+		'{major}.{minor}',
+		'{major}'
+	];
 
 	# Pre-release segment types
 	const ALPHA = 'alpha';
@@ -36,7 +52,7 @@ class VersionNumber {
 	 * VersionNumber constructor.
 	 *
 	 * @param string|null $versionString A version number representation such as "4.2.1-beta.2".
-	 * @throws Exception
+	 * @throws InvalidFormatException
 	 */
 	public function __construct(?string $versionString = null) {
 
@@ -91,7 +107,6 @@ class VersionNumber {
 	 * @param VersionNumber|string $version The other version number to compare this version number against.
 	 * @param int|null $segment Which segment(s) to compare, null for all.
 	 * @return int 1 if this version is higher, -1 if this version is lower, 0 if they're equal
-	 * @throws Exception
 	 */
 	public function compare($version, ?int $segment = null): int {
 
@@ -111,7 +126,6 @@ class VersionNumber {
 	 *
 	 * @param int|null $segment VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant.
 	 * @return VersionNumber This instance
-	 * @throws Exception
 	 */
 	public function decrement(?int $segment = null): VersionNumber {
 		return $this->adjust($segment ?? $this->getLeastSignificantIdentifier(), -1);
@@ -337,7 +351,6 @@ class VersionNumber {
 	 *
 	 * @param int|null $segment VersionNumber::MAJOR|MINOR|PATCH|AUX|PRE, null for the least significant segment.
 	 * @return VersionNumber This instance
-	 * @throws Exception
 	 */
 	public function increment(?int $segment = null): VersionNumber {
 
@@ -353,7 +366,11 @@ class VersionNumber {
 					if (!$this->hasSegment($segment)) {
 						break;
 					}
-					$this->setSegment($segment, 0);
+					try {
+						$this->setSegment($segment, 0);
+					} catch (InvalidNumberException $e) {
+						throw new Error('Internal error. This is a bug.', 0, $e);
+					}
 				}
 
 				# Remove any pre-release segment when the specified segment is major, minor, patch or aux
@@ -402,11 +419,14 @@ class VersionNumber {
 	 * @param VersionNumber|string $version The other version number to compare this against.
 	 * @param int|null $segment Which segment(s) to compare, null for all.
 	 * @return boolean
-	 * @throws Exception
 	 */
 	public function isEqualTo($version, ?int $segment = null): bool {
 
-		$version = is_string($version) ? new VersionNumber($version) : $version;
+		try {
+			$version = is_string($version) ? new VersionNumber($version) : $version;
+		} catch (InvalidFormatException $e) {
+			return false;
+		}
 
 		$segment = $segment ?: self::MAJOR | self::MINOR | self::PATCH | self::AUX | self::PRE;
 
@@ -449,11 +469,14 @@ class VersionNumber {
 	 * @param VersionNumber|string $version The other version number to compare this against.
 	 * @param int|string|null $segment Which segment(s) to compare, null for all.
 	 * @return boolean
-	 * @throws Exception
 	 */
 	public function isHigherThan($version, $segment = null): bool {
 
-		$version = is_string($version) ? new VersionNumber($version) : $version;
+		try {
+			$version = is_string($version) ? new VersionNumber($version) : $version;
+		} catch (InvalidFormatException $e) {
+			return false;
+		}
 
 		$segment = $segment ?: self::MAJOR | self::MINOR | self::PATCH | self::AUX | self::PRE;
 
@@ -568,7 +591,6 @@ class VersionNumber {
 	 * @param VersionNumber|string $version The other version number to compare this against.
 	 * @param int|string|null $segment Which segment(s) to compare, null for all.
 	 * @return boolean
-	 * @throws Exception
 	 */
 	public function isLowerThan($version, $segment = null): bool {
 		return !$this->isEqualTo($version, $segment) && !$this->isHigherThan($version, $segment);
@@ -617,6 +639,45 @@ class VersionNumber {
 	}
 
 	/**
+	 * Indicates whether a given value represents a valid version number.
+	 *
+	 * @param mixed $value
+	 * @return bool
+	 */
+	public static function isValid($value): bool {
+
+		if ($value instanceof VersionNumber) {
+			return true;
+		}
+
+		if (!is_string($value)) {
+			return false;
+		}
+
+		if (!$segments = Substractor::macros($value, self::SUPPORTED_FORMATS)) {
+			return false;
+		}
+
+			foreach ($segments as $name => $value) {
+				if ($name === 'preType') {
+					if (!in_array($value, [self::ALPHA, self::BETA])) {
+						return false;
+					}
+					continue;
+				}
+
+				try {
+					self::parseNumber($value);
+				} catch (InvalidNumberException $e) {
+					return false;
+				}
+			}
+
+		return true;
+
+	}
+
+	/**
 	 * Indicates whether this version number matches a given pattern.
 	 *
 	 * @param string $pattern E.g. "1.0.1", "1.*", "2.?.?"
@@ -631,9 +692,9 @@ class VersionNumber {
 	 *
 	 * @param string|int|null $number The number to parse.
 	 * @return int|null
-	 * @throws Exception If the parameter is not null or does not represent zero or a positive integer.
+	 * @throws InvalidNumberException If the parameter is not null or does not represent zero or a positive integer.
 	 */
-	private function parseNumber($number): ?int {
+	private static function parseNumber($number): ?int {
 
 		if ($number === null) {
 			return null;
@@ -645,11 +706,10 @@ class VersionNumber {
 				if ($number >= 0) {
 					return $number;
 				}
-				throw new Exception('Parameter VersionNumber::parseNumber($number) can not be a negative integer');
 			}
-			throw new Exception('Parameter VersionNumber::parseNumber($number) must represent an integer');
 		}
-		throw new Exception('Parameter VersionNumber::parseNumber($number) must be a string, integer or null');
+
+		throw new InvalidNumberException($number);
 
 	}
 
@@ -658,54 +718,41 @@ class VersionNumber {
 	 *
 	 * @param string $versionString A version string on the form "MAJOR[.MINOR.[PATCH[.AUX][-alpha.N]|[-beta.N]]]".
 	 * @return void
-	 * @throws Exception
+	 * @throws InvalidFormatException
 	 */
 	private function parseString(string $versionString): void {
 
 		$versionString = strtolower($versionString);
 
-		$supportedFormats = array(
-			'{major}.{minor}.{patch}.{aux}-{preType}.{preNumber}',
-			'{major}.{minor}.{patch}-{preType}.{preNumber}',
-			'{major}.{minor}-{preType}.{preNumber}',
-			'{major}-{preType}.{preNumber}',
+		$segments = Substractor::macros($versionString, self::SUPPORTED_FORMATS);
 
-			'{major}.{minor}.{patch}.{aux}-{preType}',
-			'{major}.{minor}.{patch}-{preType}',
-			'{major}.{minor}-{preType}',
-			'{major}-{preType}',
-
-			'{major}.{minor}.{patch}.{aux}',
-			'{major}.{minor}.{patch}',
-			'{major}.{minor}',
-			'{major}'
-		);
-
-		$segments = Substractor::macros($versionString, $supportedFormats);
-
-		foreach ($segments as $name => $value) {
-			switch ($name) {
-				case 'major':
-					$this->setMajor($value);
-					break;
-				case 'minor':
-					$this->setMinor($value);
-					break;
-				case 'patch':
-					$this->setPatch($value);
-					break;
-				case 'aux':
-					$this->setAux($value);
-					break;
-				case 'preType':
-					$this->setPreReleaseType($value);
-					break;
-				case 'preNumber':
-					$this->setPreReleaseNumber($value);
-					break;
-				default:
-					throw new Exception('Invalid version format');
+		try {
+			foreach ($segments as $name => $value) {
+				switch ($name) {
+					case 'major':
+						$this->setMajor($value);
+						break;
+					case 'minor':
+						$this->setMinor($value);
+						break;
+					case 'patch':
+						$this->setPatch($value);
+						break;
+					case 'aux':
+						$this->setAux($value);
+						break;
+					case 'preType':
+						$this->setPreReleaseType($value);
+						break;
+					case 'preNumber':
+						$this->setPreReleaseNumber($value);
+						break;
+					default:
+						throw new InvalidFormatException($value);
+				}
 			}
+		} catch (InvalidNumberException $e) {
+			throw new InvalidFormatException($value);
 		}
 
 	}
@@ -715,7 +762,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setAlpha($value = null): VersionNumber {
 
@@ -738,7 +785,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setAux($value): VersionNumber {
 
@@ -757,7 +804,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The value of the segment.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setBeta($value = null): VersionNumber {
 
@@ -778,7 +825,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setMajor($value): VersionNumber {
 
@@ -793,7 +840,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setMinor($value): VersionNumber {
 
@@ -808,7 +855,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setPatch($value): VersionNumber {
 
@@ -827,7 +874,7 @@ class VersionNumber {
 	 *
 	 * @param int|string|null $value The segment value.
 	 * @return VersionNumber This instance
-	 * @throws Exception
+	 * @throws InvalidNumberException
 	 */
 	public function setPreReleaseNumber($value): VersionNumber {
 
@@ -857,8 +904,11 @@ class VersionNumber {
 	 * @param int $segment
 	 * @param int $value A non-negative integer.
 	 * @return VersionNumber This instance
+	 * @throws InvalidNumberException
 	 */
 	public function setSegment(int $segment, int $value): VersionNumber {
+
+		$value = $this->parseNumber($value);
 
 		switch ($segment) {
 			case $this::MAJOR:
@@ -897,7 +947,6 @@ class VersionNumber {
 	 * </ul>
 	 *
 	 * @return VersionNumber This instance
-	 * @throws Exception
 	 */
 	public function setStable(): VersionNumber {
 
@@ -910,17 +959,21 @@ class VersionNumber {
 
 		# If the major segment is zero, this version number is considered non-stable
 		# (see https://semver.org/#spec-item-4) and the first stable version is always 1[.0[.0[.0]]]
-		if ($this->getMajor() === 0) {
-			$this->setMajor(1);
-			if ($this->hasMinor()) {
-				$this->setMinor(0);
+		try {
+			if ($this->getMajor() === 0) {
+				$this->setMajor(1);
+				if ($this->hasMinor()) {
+					$this->setMinor(0);
+				}
+				if ($this->hasPatch()) {
+					$this->setPatch(0);
+				}
+				if ($this->hasAux()) {
+					$this->setAux(0);
+				}
 			}
-			if ($this->hasPatch()) {
-				$this->setPatch(0);
-			}
-			if ($this->hasAux()) {
-				$this->setAux(0);
-			}
+		} catch (InvalidNumberException $e) {
+			throw new Error('Internal error. This is a bug.', 0, $e);
 		}
 
 		return $this;
@@ -931,13 +984,12 @@ class VersionNumber {
 	 * Provides a sorted array of version numbers.
 	 *
 	 * @param string[]|VersionNumber[] $versionNumbers Zero or more version numbers.
-	 * @param bool $desc True to sort in a descending order, false for an ascending order.
+	 * @param bool $desc True to sort descendingly, false to sort ascendingly.
 	 * @return string[]|VersionNumber[]
-	 * @throws Exception
 	 */
 	public static function sort(array $versionNumbers, bool $desc = false): array {
 
-		$result = $versionNumbers;
+		$result = $versionNumbers; # Make a copy to not disrupt the provided array
 
 		usort($result, self::getSorter($desc));
 
