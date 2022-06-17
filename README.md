@@ -1,5 +1,7 @@
 # About
-The VersionNumber class of this library represents a [SemVer 2.0.0](https://semver.org/) semi-compliant version number. The class offers methods for querying the version number it represents as well as methods for comparison and manipulation.
+The `VersionNumber` class of this library represents a [SemVer 2.0.0](https://semver.org/) semi-compliant version number. The class offers methods for querying the version number it represents as well as methods for comparison and manipulation.
+
+The `VersionRange` class represents a range a version number falls inside or outside of. It currently only offers caret range support.
 
 # Requirements
 This library requires PHP 7.4/8.0 and jeffpacks/substractor.
@@ -19,6 +21,7 @@ use jeffpacks\semver\VersionNumber;
 <?php
 require_once '../vendor/autoload.php'; # Using the Composer classloader
 use jeffpacks\semver\VersionNumber;
+use jeffpacks\semver\VersionRange;
 
 $alphaVersion = new VersionNumber('1.2.0-alpha.12');
 $betaVersion = new VersionNumber('1.0.3-beta.3');
@@ -57,6 +60,12 @@ $alphaVersion->setBeta(5); # 1.2.0-beta.5
 VersionNumber::sort(['1.2', '1.10', '1.1']); # ['1.1', '1.2, '1.10']
 VersionNumber::sort(['1.2', '1.10', '1.1'], true); # ['1.10', '1.2, '1.1']
 VersionNumber::sort([$betaVersion, $alphaVersion]); # [$alphaVersion, $betaVersion]
+
+$range = new VersionRange('^2.1');
+$range->isInRange('1.0.0'); # false
+$range->isInRange('2.1.1'); # true
+$range->isInRange('3.0.0'); # false
+$highestMatch = $range->getHighestMatch(['1.2.0', '2.2.1', '2.1.2', '3.1.3']); # '2.2.1'
 ```
 
 # Semantic Versioning compliance
