@@ -2,6 +2,7 @@
 
 namespace jeffpacks\semver;
 
+use Error;
 use jeffpacks\semver\exceptions\InvalidFormatException;
 use jeffpacks\substractor\Substractor;
 
@@ -31,6 +32,28 @@ class VersionRange {
 	}
 
 	/**
+	 * Provides the highest of a given set of version numbers that falls within this range.
+	 *
+	 * @param string[]|VersionNumber[] $versionNumbers
+	 * @return VersionNumber|null
+	 */
+	public function getHighestMatch(array $versionNumbers): ?VersionNumber {
+
+		foreach (VersionNumber::sort($versionNumbers, true) as $versionNumber) {
+			if ($this->isInRange($versionNumber)) {
+				try {
+					return $versionNumber instanceof VersionNumber ? $versionNumber : new VersionNumber($versionNumber);
+				} catch (InvalidFormatException $e) {
+					throw new Error('Internal error. This is a bug.', 0, $e);
+				}
+			}
+		}
+
+		return null;
+
+	}
+
+	/**
 	 * Provides the version number that is the basis for this range.
 	 *
 	 * @return VersionNumber
@@ -48,7 +71,7 @@ class VersionRange {
 	public function isInRange($versionNumber): bool {
 
 		try {
-			$versionNumber = new VersionNumber($versionNumber);
+			$versionNumber = $versionNumber instanceof VersionNumber ? $versionNumber : new VersionNumber($versionNumber);
 		} catch (InvalidFormatException $e) {
 			return false;
 		}

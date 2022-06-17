@@ -8,6 +8,24 @@ use PHPUnit\Framework\TestCase;
 
 class VersionRangeTest extends TestCase {
 
+	public function testGetHighestMatch() {
+
+		$range = new VersionRange('^2.1.2');
+
+		$highestMatch = $range->getHighestMatch([
+			'1.0.0',
+			'1.2.0',
+			'2.0.0',
+			'2.1.0',
+			'2.1.1',
+			'2.2.0',
+			'3.0.0'
+		]);
+
+		$this->assertEquals('2.2.0', $highestMatch->__toString());
+
+	}
+
 	public function testGetVersionNumber() {
 
 		$range = new VersionRange('^1.2.3');
