@@ -4,7 +4,6 @@ namespace jeffpacks\semver\tests;
 
 use jeffpacks\semver\VersionNumber;
 use jeffpacks\semver\exceptions\InvalidFormatException;
-use PharIo\Version\Version;
 use PHPUnit\Framework\TestCase;
 
 class VersionNumberTest extends TestCase {
