@@ -63,6 +63,66 @@ class VersionRange {
 	}
 
 	/**
+	 * Indicates whether the threshold of this version range is equal to another given version number or version range.
+	 *
+	 * @param VersionRange|VersionNumber|string $version The other version range or number to compare this against.
+	 * @param int|null $segment Which segment(s) to compare, null for all.
+	 * @return boolean
+	 */
+	public function isEqualTo($version, ?int $segment = null): bool {
+
+		if (is_string($version) && VersionRange::isValid($version)) {
+			try {
+				$version = new VersionRange($version);
+				return $this->getVersionNumber()->isEqualTo($version->getVersionNumber(), $segment);
+			} catch (InvalidFormatException $e) {
+				throw new Error('You found a bug', 0, $e);
+			}
+		}
+
+		if (VersionNumber::isValid($version)) {
+			return $this->getVersionNumber()->isEqualTo($version, $segment);
+		}
+
+		if ($version instanceof VersionRange) {
+			return $this->getVersionNumber()->isEqualTo($version->getVersionNumber(), $segment);
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Indicates whether this version range has a higher threshold than another given version number or version range.
+	 *
+	 * @param VersionRange|VersionNumber|string $version The other version range or number to compare this against.
+	 * @param int|string|null $segment Which segment(s) to compare, null for all.
+	 * @return boolean
+	 */
+	public function isHigherThan($version, $segment = null): bool {
+
+		if (is_string($version) && VersionRange::isValid($version)) {
+			try {
+				$version = new VersionRange($version);
+				return $this->getVersionNumber()->isHigherThan($version->getVersionNumber(), $segment);
+			} catch (InvalidFormatException $e) {
+				throw new Error('You found a bug', 0, $e);
+			}
+		}
+
+		if (VersionNumber::isValid($version)) {
+			return $this->getVersionNumber()->isHigherThan($version, $segment);
+		}
+
+		if ($version instanceof VersionRange) {
+			return $this->getVersionNumber()->isHigherThan($version->getVersionNumber(), $segment);
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * Indicates whether a given version number is within this range.
 	 *
 	 * @param string|VersionNumber $versionNumber
@@ -79,6 +139,36 @@ class VersionRange {
 		return
 			!$versionNumber->isHigherThan($this->versionNumber, VersionNumber::MAJOR) &&
 			!$versionNumber->isLowerThan($this->versionNumber);
+	}
+
+	/**
+	 * Indicates whether this version range has a lower threshold than another given version number or version range.
+	 *
+	 * @param VersionRange|VersionNumber|string $version The other version range or number to compare this against.
+	 * @param int|string|null $segment Which segment(s) to compare, null for all.
+	 * @return boolean
+	 */
+	public function isLowerThan($version, $segment = null): bool {
+
+		if (is_string($version) && VersionRange::isValid($version)) {
+			try {
+				$version = new VersionRange($version);
+				return $this->getVersionNumber()->isLowerThan($version->getVersionNumber(), $segment);
+			} catch (InvalidFormatException $e) {
+				throw new Error('You found a bug', 0, $e);
+			}
+		}
+
+		if (VersionNumber::isValid($version)) {
+			return $this->getVersionNumber()->isLowerThan($version, $segment);
+		}
+
+		if ($version instanceof VersionRange) {
+			return $this->getVersionNumber()->isLowerThan($version->getVersionNumber(), $segment);
+		}
+
+		return false;
+
 	}
 
 	/**

@@ -34,6 +34,42 @@ class VersionRangeTest extends TestCase {
 
 	}
 
+	public function testIsEqual() {
+
+		$range = new VersionRange('^1.5');
+		$this->assertTrue($range->isEqualTo('^1.5'));
+		$this->assertTrue($range->isEqualTo(new VersionNumber('1.5')));
+		$this->assertTrue($range->isEqualTo(new VersionRange('^1.5')));
+		$this->assertFalse($range->isEqualTo('^1.4'));
+		$this->assertFalse($range->isEqualTo(new VersionNumber('1.4')));
+		$this->assertFalse($range->isEqualTo(new VersionRange('^1.4')));
+
+	}
+
+	public function testIsHigherThan() {
+
+		$range = new VersionRange('^1.5');
+		$this->assertTrue($range->isHigherThan('^1.4'));
+		$this->assertTrue($range->isHigherThan(new VersionNumber('1.4')));
+		$this->assertTrue($range->isHigherThan(new VersionRange('^1.4')));
+		$this->assertFalse($range->isHigherThan('^1.5'));
+		$this->assertFalse($range->isHigherThan(new VersionNumber('1.6')));
+		$this->assertFalse($range->isHigherThan(new VersionRange('^2.0')));
+
+	}
+
+	public function testIsLowerThan() {
+
+		$range = new VersionRange('^1.5');
+		$this->assertTrue($range->isLowerThan('^1.6'));
+		$this->assertTrue($range->isLowerThan(new VersionNumber('2.0')));
+		$this->assertTrue($range->isLowerThan(new VersionRange('^2.1')));
+		$this->assertFalse($range->isLowerThan('^1.5'));
+		$this->assertFalse($range->isLowerThan(new VersionNumber('1.4')));
+		$this->assertFalse($range->isLowerThan(new VersionRange('^1.4')));
+
+	}
+
 	public function testIsValid() {
 
 		$this->assertTrue(VersionRange::isValid('^1.2.3'));
@@ -58,4 +94,5 @@ class VersionRangeTest extends TestCase {
 		$this->assertFalse($range->isInRange('3.0.0'));
 
 	}
+
 }
