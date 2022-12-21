@@ -2,15 +2,19 @@
 
 namespace jeffpacks\semver\tests;
 
-use jeffpacks\semver\VersionNumber;
 use jeffpacks\semver\VersionRange;
+use jeffpacks\semver\VersionNumber;
+use jeffpacks\semver\exceptions\InvalidFormatException;
 use PHPUnit\Framework\TestCase;
 
 class VersionRangeTest extends TestCase {
 
+	/**
+	 * @throws InvalidFormatException
+	 */
 	public function testGetHighestMatch() {
 
-		$range = new VersionRange('^2.1.2');
+		$range = new VersionRange('^2.1');
 
 		$versionNumbers = [
 			'3.0.0',
@@ -23,6 +27,8 @@ class VersionRangeTest extends TestCase {
 		];
 
 		$this->assertEquals('2.2.0', $range->getHighestMatch($versionNumbers));
+		$this->assertEquals('2.1.1', $range->getHighestMatch($versionNumbers, '2.2.0'));
+		$this->assertEquals('2.2.0', $range->getHighestMatch($versionNumbers, new VersionNumber('3.0.0')));
 
 	}
 

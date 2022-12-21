@@ -34,17 +34,22 @@ class VersionRange {
 	/**
 	 * Provides the highest of a given set of version numbers that falls within this range.
 	 *
-	 * @param string[]|VersionNumber[] $versionNumbers
+	 * @param string[]|VersionNumber[] $versionNumbers A set of version numbers from whom to find the highest one that matches this range.
+	 * @param string|VersionNumber|null $below If passed, the highest version number that is below this version number is returned.
 	 * @return string|VersionNumber|null
+	 * @throws InvalidFormatException
 	 */
-	public function getHighestMatch(array $versionNumbers)  {
+	public function getHighestMatch(array $versionNumbers, $below = null)  {
 
 		foreach (VersionNumber::sort($versionNumbers, true) as $versionNumber) {
 			if ($this->isInRange($versionNumber)) {
-				try {
+				if ($below) {
+					$below = $below instanceof VersionNumber ? $below : new VersionNumber($below);
+					if ($below->isHigherThan($versionNumber)) {
+						return $versionNumber;
+					}
+				} else {
 					return $versionNumber;
-				} catch (InvalidFormatException $e) {
-					throw new Error('Internal error. This is a bug.', 0, $e);
 				}
 			}
 		}
