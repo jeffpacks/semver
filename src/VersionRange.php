@@ -198,4 +198,12 @@ class VersionRange {
 
 	}
 
+	/**
+	 * Provides a string representation of this version range.
+	 *
+	 * @return string
+	 */
+	public function __toString(): string {
+		return "^{$this->getVersionNumber()}";
+	}
 }
