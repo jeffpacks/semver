@@ -25,9 +25,7 @@ class VersionRange {
 			throw new InvalidFormatException($range);
 		}
 
-		$parts = Substractor::macros($range, '^{tuple}');
-
-		$this->versionNumber = new VersionNumber($parts['tuple']);
+		$this->versionNumber = new VersionNumber(str_replace('^', '', $range));
 
 	}
 
