@@ -174,8 +174,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Provides the identifier of the segment that is considered to be least
-	 * significant in the current version number.
+	 * Provides the identifier of the segment that is considered to be least significant in the current version number.
 	 *
 	 * @return int|null
 	 */
@@ -384,8 +383,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether this version number signifies an ALPHA
-	 * pre-release.
+	 * Indicates whether this version number signifies an ALPHA pre-release.
 	 *
 	 * @return boolean
 	 */
@@ -403,8 +401,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether this version number signifies a BETA
-	 * pre-release.
+	 * Indicates whether this version number signifies a BETA pre-release.
 	 *
 	 * @return boolean
 	 */
@@ -463,8 +460,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether this version number is higher than another given
-	 * version number.
+	 * Indicates whether this version number is higher than another given version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this against.
 	 * @param int|string|null $segment Which segment(s) to compare, null for all.
@@ -585,8 +581,7 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether this version number is lower than another given
-	 * version number.
+	 * Indicates whether this version number is lower than another given version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this against.
 	 * @param int|string|null $segment Which segment(s) to compare, null for all.
