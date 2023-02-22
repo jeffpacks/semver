@@ -435,8 +435,30 @@ class VersionNumber {
 	}
 
 	/**
-	 * Indicates whether a given version number is equal to this version
-	 * number.
+	 * Indicates whether this version number is the first in a given version space.
+	 *
+	 * @param int $segment The segment that defines the version space.
+	 * @return bool
+	 */
+	public function isFirst(int $segment = self::MAJOR): bool {
+
+		switch ($segment) {
+			case self::MAJOR:
+				return !$this->getMinor() && !$this->getPatch() && !$this->getAux() && !$this->getPreReleaseNumber();
+			case self::MINOR:
+				return !$this->getPatch() && !$this->getAux() && !$this->getPreReleaseNumber();
+			case self::PATCH:
+				return !$this->getAux() && !$this->getPreReleaseNumber();
+			case self::AUX:
+				return !$this->getPreReleaseNumber();
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Indicates whether a given version number is equal to this version number.
 	 *
 	 * @param VersionNumber|string $version The other version number to compare this against.
 	 * @param int|null $segment Which segment(s) to compare, null for all.

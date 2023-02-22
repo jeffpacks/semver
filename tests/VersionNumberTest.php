@@ -191,6 +191,46 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	public function testIsFirst() {
+
+		$versionNumber = new VersionNumber('1.0.0.0-alpha.0');
+
+		$this->assertTrue($versionNumber->isFirst());
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::MINOR));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::PATCH));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::AUX));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PRE));
+
+		$versionNumber = new VersionNumber('1.0.0.0-alpha.1');
+		$this->assertFalse($versionNumber->isFirst());
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::MINOR));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PATCH));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::AUX));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PRE));
+
+		$versionNumber = new VersionNumber('1.0.0.1-alpha.0');
+		$this->assertFalse($versionNumber->isFirst());
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::MINOR));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PATCH));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::AUX));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PRE));
+
+		$versionNumber = new VersionNumber('1.0.1.0-alpha.0');
+		$this->assertFalse($versionNumber->isFirst());
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::MINOR));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::PATCH));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::AUX));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PRE));
+
+		$versionNumber = new VersionNumber('1.1.0.0-alpha.0');
+		$this->assertFalse($versionNumber->isFirst());
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::MINOR));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::PATCH));
+		$this->assertTrue($versionNumber->isFirst(VersionNumber::AUX));
+		$this->assertFalse($versionNumber->isFirst(VersionNumber::PRE));
+
+	}
+
 	public function testIsHigherThan() {
 
 		$versionNumber = new VersionNumber('0.1.0');
