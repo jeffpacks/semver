@@ -223,6 +223,31 @@ class VersionNumber {
 	}
 
 	/**
+	 * Provides the next version number in a given line of version numbers.
+	 *
+	 * @param string|string[]|VersionNumber|VersionNumber[] $versionNumbers A version number, a space separated string of version numbers or an array of version numbers.
+	 * @param int|null $segment The segment to increment, null for the least significant segment.
+	 * @return VersionNumber|null
+	 * @throws InvalidFormatException
+	 */
+	public static function getNext($versionNumbers, ?int $segment = null): ?VersionNumber {
+
+		if (is_string($versionNumbers)) {
+			$versionNumbers = explode(' ', $versionNumbers);
+		}
+
+		if ($sortedVersionNumbers = self::sort($versionNumbers)) {
+			$highestVersionNumber = end($sortedVersionNumbers);
+			$nextVersionNumber = new VersionNumber((string) $highestVersionNumber);
+			$nextVersionNumber->increment($segment);
+			return $nextVersionNumber;
+		}
+
+		return null;
+
+	}
+
+	/**
 	 * Provides the patch segment of the current version number.
 	 *
 	 * @return int|null

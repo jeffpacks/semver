@@ -408,4 +408,35 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	public function testGetNext() {
+
+		$this->assertInstanceOf(VersionNumber::class, VersionNumber::getNext('2.0.0'));
+		$this->assertInstanceOf(VersionNumber::class, VersionNumber::getNext('2.0.0', VersionNumber::MAJOR));
+		$this->assertInstanceOf(VersionNumber::class, VersionNumber::getNext('2.0.0', VersionNumber::MINOR));
+		$this->assertInstanceOf(VersionNumber::class, VersionNumber::getNext('2.0.0', VersionNumber::PATCH));
+		$this->assertInstanceOf(VersionNumber::class, VersionNumber::getNext('2.0.0 2.0.1'));
+		$this->assertInstanceOf(VersionNumber::class, VersionNumber::getNext(['2.0.0', '2.0.1']));
+
+		$this->assertEquals('2', (string) VersionNumber::getNext('1'));
+		$this->assertEquals('1.1', (string) VersionNumber::getNext('1.0'));
+		$this->assertEquals('1.0.1', (string) VersionNumber::getNext('1.0.0'));
+
+		$this->assertEquals('2', (string) VersionNumber::getNext('1', VersionNumber::MAJOR));
+		$this->assertEquals('2.0', (string) VersionNumber::getNext('1.0', VersionNumber::MAJOR));
+		$this->assertEquals('2.0.0', (string) VersionNumber::getNext('1.0.0', VersionNumber::MAJOR));
+
+		$this->assertEquals('1', (string) VersionNumber::getNext('1', VersionNumber::MINOR));
+		$this->assertEquals('1.1', (string) VersionNumber::getNext('1.0', VersionNumber::MINOR));
+		$this->assertEquals('1.1.0', (string) VersionNumber::getNext('1.0.0', VersionNumber::MINOR));
+
+		$this->assertEquals('1', (string) VersionNumber::getNext('1', VersionNumber::PATCH));
+		$this->assertEquals('1.0', (string) VersionNumber::getNext('1.0', VersionNumber::PATCH));
+		$this->assertEquals('1.0.1', (string) VersionNumber::getNext('1.0.0', VersionNumber::PATCH));
+
+		$this->assertEquals('5', (string) VersionNumber::getNext('1 4 3 2'));
+		$this->assertEquals('1.5', (string) VersionNumber::getNext('1.0 1.3 1.4 1.2')); # 1.1 is intentionally missing
+		$this->assertEquals('1.0.5', (string) VersionNumber::getNext('1.0.0 1.0.3 1.0.4 1.0.2')); # 1.0.1 is intentionally missing
+
+	}
+
 }
