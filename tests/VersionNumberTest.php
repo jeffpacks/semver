@@ -479,4 +479,32 @@ class VersionNumberTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws InvalidFormatException
+	 */
+	public function testMin() {
+
+		$versionA = new VersionNumber('1.0.0');
+		$versionB = new VersionNumber('1.1.0');
+
+		$this->assertEquals($versionA, $versionA->min($versionB));
+		$this->assertEquals($versionA, $versionB->min($versionA));
+		$this->assertEquals($versionA, $versionA->min('1.1.1'));
+
+	}
+
+	/**
+	 * @throws InvalidFormatException
+	 */
+	public function testMax() {
+
+		$versionA = new VersionNumber('1.0.0');
+		$versionB = new VersionNumber('1.1.0');
+
+		$this->assertEquals($versionB, $versionA->max($versionB));
+		$this->assertEquals($versionB, $versionB->max($versionA));
+		$this->assertEquals($versionB, $versionB->max('0.1.0'));
+
+	}
+
 }

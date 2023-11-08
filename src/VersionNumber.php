@@ -730,6 +730,52 @@ class VersionNumber {
 	}
 
 	/**
+	 * Provides the version number that is highest, this or another given version number.
+	 *
+	 * @param VersionNumber|string $versionNumber A version number string or object to compare against.
+	 * @return VersionNumber This version number if it is higher or equal to the given version number
+	 * @throws InvalidFormatException If the given parameter value is a string that is not a valid version number
+	 */
+	public function max($versionNumber): VersionNumber {
+
+		$versionNumber = $versionNumber instanceof VersionNumber ? $versionNumber : new VersionNumber($versionNumber);
+
+		if ($this->isHigherThan($versionNumber)) {
+			return $this;
+		}
+
+		if ($this->isLowerThan($versionNumber)) {
+			return $versionNumber;
+		}
+
+		return $this;
+
+	}
+
+	/**
+	 * Provides the version number that is lowest, this or another given version number.
+	 *
+	 * @param VersionNumber|string $versionNumber A version number string or object to compare against.
+	 * @return VersionNumber This version number if it is lower or equal to the given version number
+	 * @throws InvalidFormatException If the given parameter value is a string that is not a valid version number
+	 */
+	public function min($versionNumber): VersionNumber {
+
+		$versionNumber = $versionNumber instanceof VersionNumber ? $versionNumber : new VersionNumber($versionNumber);
+
+		if ($this->isLowerThan($versionNumber)) {
+			return $this;
+		}
+
+		if ($this->isHigherThan($versionNumber)) {
+			return $versionNumber;
+		}
+
+		return $this;
+
+	}
+
+	/**
 	 * Parses the integer value of a numeric string.
 	 *
 	 * @param string|int|null $number The number to parse.
